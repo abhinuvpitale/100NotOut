@@ -14,7 +14,18 @@ class Player:
         self.index          = index
         self.cards          = cards
         self.next_player    = next_player 
+        self.value          = self.update()
 
+    def update(self):
+        value = 0
+        for card in self.cards:
+            value = value + self.__get_card_value(card)
+        return value
+
+            
+    def __get_card_value(self, card):
+        VALUE_DICT = {'Ace':1,'2':2,'3':3,'4':4,'5':5,'6':6,'7':7,'8':8,'9':9,'10':10, "King": 10,"Queen": 10,"Jack": 10,"Joker":0}
+        return VALUE_DICT[card.value]
 
 class Game:
     def __init__(self):
@@ -35,6 +46,22 @@ class Game:
         self.curr_player    = 0
 
     
+    def public_info(self):
+        return_str = {}
+        return_str["curr_turn"] = self.curr_player
+        return_str["top_cards"] = self.top_cards
+        return_str["discarded"] = self.discarded
+        return return_str
+    
+    
+    def private_info(self):
+        return_str = self.public_info
+        for player in self.players:
+            return_str[""+player.index] = player
+        
+        return return_str
+
+
     def error(self, message):
         printf(""+message)
     
@@ -99,7 +126,14 @@ class Game:
         return return_str
 
     def next_player(self):
+        self.curr_player.update()
         self.curr_player = self.curr_player.next_player
+
+    
+    def show(self):
+        return_str = []
+        return_str.append("Player {} Shows!".format(self.curr_player.index))
+        
 
         
 if __name__=="__main__":
