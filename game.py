@@ -1,5 +1,6 @@
 import pydealer as pd
 from socket import *
+import math
 
 MAX_PLAYERS     = 8
 CARDS_TO_DEAL   = 5
@@ -133,11 +134,41 @@ class Game:
     def show(self):
         return_str = []
         return_str.append("Player {} Shows!".format(self.curr_player.index))
-        
 
-        
+def receiveData(receiveSocket, buffersize=10):
+    n = int(receiveSocket.recv(buffersize))
+    data = ''
+    while n > 0:
+        data = data + receiveSocket.recv(buffersize)
+        n = n - 1
+    return data.decode()
+
+def sendData(data, sendSocket, buffersize=10):
+    data = data.encode()
+    size = len(data)
+    numberOfPackets = int(math.ceil((size*1.0/buffersize)))
+    sendSocket.send(str(numberOfPackets))
+    packetNumber = 0
+    while packetNumber < numberOfPackets:
+        sendSocket.send(data[buffersize*packetNumber:buffersize*(packetNumber+1)])
+        packetNumber = packetNumber + 1
+
+
+PORT = 1001        
 if __name__=="__main__":
     # Load the sockets - connection - whatevs
+    serverPort = PORT
+    
+    # create a TCP socket
+    serverSocket = socket(AF_INET,SOCK_STREAM)
+
+    # bind the socket
+    serverSocket.bind(('',serverPort))
+
+    print('Server started on port : {}'.format(serverPort))
+
+    # Wait for incoming sockets/requests
+    serverSocket.listen(1)
 
     # how many players?
 
@@ -146,12 +177,19 @@ if __name__=="__main__":
     game.new_game(5)
 
     while True:
+        # socket stuff
+        connectionSocket, addr = serverSocket.accept()
+        
+        sendData("SHOW? PLAY?", connectionSocket)
+        
+        first_text = receiveData(connectionSocket)
+        print(first_text)
         # whose turn is it?
         turn = game.curr_player.index
         print("PLayer {} plays".format(turn))
         print("TOP CARD: {}".format(game.top_cards))
 
-        first_text = input("SHOW? PLAY?")
+        #first_text = input("SHOW? PLAY?")
         if first_text == "SHOW":
             game.show()
         elif first_text == "PLAY":
