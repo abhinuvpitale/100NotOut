@@ -8,7 +8,7 @@ def getHttpRequest(query):
     return query
 
 def sendData(data, sendSocket, buffer_size=10):
-    data = data.encode()
+    data = json.dumps(data)
     size = len(data)
     numberOfPackets = int(math.ceil((size*1.0/buffer_size)))
     sendSocket.send(str(numberOfPackets))
@@ -21,9 +21,9 @@ def receiveData(clientSocket, buffer_size=10):
     n = int(clientSocket.recv(buffer_size))
     data = ''
     while n > 0:
-        data = data + clientSocket.recv(BUFFERSIZE)
+        data = data + str(clientSocket.recv(BUFFERSIZE))
         n = n - 1
-    return data.decode()
+    return json.loads(data)
 	
 ################################# Start of main Program #################################
 
@@ -45,9 +45,10 @@ print("connected on port {}".format(serverPort))
 
 #get Response
 data = receiveData(clientSocket)
+print(data)
 
 #input User Query
-first_data = raw_input(data)
+first_data = raw_input(first_data)
 
 #send query via the Socket
 sendData(first_data,clientSocket)

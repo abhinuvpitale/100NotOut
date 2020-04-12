@@ -1,6 +1,7 @@
 import pydealer as pd
 from socket import *
 import math
+import json
 
 MAX_PLAYERS     = 8
 CARDS_TO_DEAL   = 5
@@ -56,10 +57,9 @@ class Game:
     
     
     def private_info(self):
-        return_str = self.public_info
+        return_str = self.public_info()
         for player in self.players:
-            return_str[""+player.index] = player
-        
+            return_str["player"+player.index] = player
         return return_str
 
 
@@ -141,13 +141,13 @@ def receiveData(receiveSocket, buffersize=10):
     while n > 0:
         data = data + receiveSocket.recv(buffersize)
         n = n - 1
-    return data.decode()
+    return json.loads(data)
 
 def sendData(data, sendSocket, buffersize=10):
-    data = data.encode()
+    data = json.dumps(data).encode()
     size = len(data)
     numberOfPackets = int(math.ceil((size*1.0/buffersize)))
-    sendSocket.send(str(numberOfPackets))
+    sendSocket.send(str(numberOfPackets).encode())
     packetNumber = 0
     while packetNumber < numberOfPackets:
         sendSocket.send(data[buffersize*packetNumber:buffersize*(packetNumber+1)])
@@ -180,7 +180,9 @@ if __name__=="__main__":
         # socket stuff
         connectionSocket, addr = serverSocket.accept()
         
-        sendData("SHOW? PLAY?", connectionSocket)
+        data = {}
+        data["data"] = "SHOW?PLAY?"
+        sendData(data, connectionSocket)
         
         first_text = receiveData(connectionSocket)
         print(first_text)
