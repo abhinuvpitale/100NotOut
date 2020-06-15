@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+   <head>
+      <meta charset="utf-8">
+      <title>Simple Flask Website</title>
+   </head>
+   <body>
+      <h1> User Data </h1>
+      <p> This is PLAYER {{ player_num }} </p>
+      <p> State Info </p>
+      <p> {{ state_data }} </p>
+      <p> Player Info </p>
+      <p> {{ player_data }} </p>
+
+
+      <form action = "http://localhost:5000/submit" method = "post">
+         <p><input type = "submit" value = "submit" /></p>
+      </form>
+   </body>
+</html>

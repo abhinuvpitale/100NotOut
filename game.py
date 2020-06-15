@@ -1,7 +1,7 @@
 import pydealer as pd
 
 # local imports
-from player import Player
+from player import Player, print_cards
 
 MAX_PLAYERS     = 8
 CARDS_TO_DEAL   = 5
@@ -26,8 +26,10 @@ class Game:
         self.curr_player_idx = 0 # starts the game!
 
     def print_dict(self, data):
+        return_str = ""
         for item in data.keys():
-            print("{} : {}".format(item, data[item]))
+            return_str = return_str + "{} : {}".format(item, data[item])
+        return return_str
     
     def public_info(self):
         return_str = {}
@@ -45,8 +47,19 @@ class Game:
         return return_str
 
 
+    def __str__(self):
+        return_str = "current player is {}".format(self.curr_player)
+        return_str = return_str + "top cards: \n"
+        return_str = print_cards(self.top_cards, return_str)
+        return_str = return_str + "discarded cards: \n"
+        return_str = print_cards(self.discarded, return_str)
+        for item in self.players:
+            return_str = return_str + "Player {} \n".format(item.index) + str(item)
+        return return_str
+
+
     def error(self, message):
-        printf(""+message)
+        print(""+message)
 
     def __deal_as_list(self, num_cards, shuffle):
         return list(self.deck.deal(num_cards, shuffle=shuffle, rebuild=False).cards)
@@ -188,11 +201,11 @@ class Game:
 if __name__=="__main__":
     game = Game()
     game.new_game(5)
-    game.print_dict(game.public_info())
+    print(game.print_dict(game.public_info()))
 
     while(1):
-        game.print_dict(game.public_info())
-        game.print_dict(game.player_info())
+        print(game.print_dict(game.public_info()))
+        print(game.print_dict(game.player_info()))
         discard = []
         pick = 0
         print("BreakPoint MOFFOOO")

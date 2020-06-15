@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+   <head>
+      <meta charset="utf-8">
+      <title>Simple Flask Website</title>
+   </head>
+   <body>
+      <h1> User Data </h1>
+      <p> {{ data }} </p>
+
+      <form action = "http://localhost:5000/update" method = "post">
+         <p><input type = "submit" value = "start_this" /></p>
+      </form>
+   </body>
+</html>
